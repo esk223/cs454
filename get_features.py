@@ -86,8 +86,16 @@ class FeatureMaker(object):
             return False
         return True
 
+    def _make_classification(self):
+        pass
+
     def _make_feature_vectors(self):
+        classes = ['bad', 'dir', 'exe', 'gro', 'mlf', 'mma', 'pag', 'pri', 'rea']
         for case_info in self.case_info_list:
+            for i, c in enumerate(classes):
+                if c == case_info.get_file_name()[:3]:
+                    case_info.set_classification(i)
+                    break
             vector = [0]*self.term_num()
             for term in case_info.get_term_info().keys():
                 vector[self.term_list.index(term)] = case_info.get_term_info()[term]
