@@ -7,14 +7,25 @@ class FeatureMaker(object):
     def __init__(self, path_dir="./test_cases/"):
         self._path_dir = path_dir
         self._test_cases_list = os.listdir(path_dir)
+        self._class_list = []           # list of classes (ex: ['bad', 'dir', 'exe', ...])
         self.term_list = []             # list of term strings
         self.case_info_list = []        # list of TestCaseInfo
 
+        self._make_class_list()         # complete self._class_list
         self._find_all_terms()          # complete self.term_list and update self.case_info_list
         self._make_feature_vectors()    # complete self.case_info_list
 
+    def class_num(self):
+        return len(self._class_list)
+
     def term_num(self):
         return len(self.term_list)
+
+    def _make_class_list(self):
+        for case_name in self._test_cases_list:
+            current_class = case_name[0:3]
+            if current_class not in self._class_list:
+                self._class_list.append(current_class)
 
     def _find_all_terms(self):
         replaced_letters_list = ['(', ')', '{', '}', '<', '>', '[', ']', '+', '-', '*', '/', '%', '=',
@@ -86,13 +97,9 @@ class FeatureMaker(object):
             return False
         return True
 
-    def _make_classification(self):
-        pass
-
     def _make_feature_vectors(self):
-        classes = ['bad', 'dir', 'exe', 'gro', 'mlf', 'mma', 'pag', 'pri', 'rea']
         for case_info in self.case_info_list:
-            for i, c in enumerate(classes):
+            for i, c in enumerate(self._class_list):
                 if c == case_info.get_file_name()[:3]:
                     case_info.set_classification(i)
                     break
