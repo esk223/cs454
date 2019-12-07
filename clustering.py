@@ -5,7 +5,14 @@ from scipy.spatial import distance
 
 
 # do k-means clustering until the cluster does not change
-def cluster(vec_list, k, method='random', num_iter=10):
+def cluster(file_name, k, method='random', num_iter=10):
+    f = open(file_name, 'r')
+    lines = f.readlines()[1:]
+    vec_list = []
+    for l in lines:
+        vector = l.split()
+        vec_list.append([float(v) for v in vector])
+    f.close()
     upper = 1 << 31
     best_cluster = []
     best_center = []
@@ -17,13 +24,13 @@ def cluster(vec_list, k, method='random', num_iter=10):
             clusters = [[] for j in range(k)]
             sum_dist = 0.0
             for v in vec_list:
-                dist = [distance.euclidean(v, center_list[x]) for x in range(k)]
+                dist = [distance.euclidean(v[:-1], center_list[x][:-1]) for x in range(k)]
                 min_dist = min(dist)
                 min_index = dist.index(min_dist)
                 clusters[min_index].append(v)
                 sum_dist += min_dist
-            center_list = calculate_center(clusters)
             if min_sum_dist > sum_dist:
+                center_list = calculate_center(clusters)
                 min_sum_dist = sum_dist
             else:
                 if best_dist > min_sum_dist:
@@ -54,7 +61,7 @@ def initialize(vec_list, k, method):
             current = init_points[-1]
             dist_list = []
             for v in vec_list:
-                dist = distance.euclidean(v, current) ** 2
+                dist = distance.euclidean(v[:-1], current[:-1]) ** 2
                 dist_list.append(dist)
             dist_list = np.cumsum(dist_list)
             dist_sum = dist_list[-1]
