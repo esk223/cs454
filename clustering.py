@@ -5,29 +5,33 @@ from scipy.spatial import distance
 
 
 # do k-means clustering until the cluster does not change
-def cluster(vec_list, k, method='random'):
-    center_list = initialize(copy.deepcopy(vec_list), k, method)
-    min_sum_dist = 1 << 31
-    while True:
-        clusters = [[] for i in range(k)]
-        sum_dist = 0
-        for v in vec_list:
-            min_dist = 1 << 31
-            min_index = 0
-            for i in range(k):
-                dist = distance.euclidean(v, center_list[i])
-                if min_dist > dist:
-                    min_dist = dist
-                    min_index = i
-            clusters[min_index].append(v)
-            sum_dist += min_dist
-        if min_sum_dist > sum_dist:
+def cluster(vec_list, k, method='random', num_iter=10):
+    upper = 1 << 31
+    best_cluster = []
+    best_center = []
+    best_dist = upper
+    for i in range(num_iter):
+        min_sum_dist = upper
+        center_list = initialize(copy.deepcopy(vec_list), k, method)
+        while True:
+            clusters = [[] for j in range(k)]
+            sum_dist = 0.0
+            for v in vec_list:
+                dist = [distance.euclidean(v, center_list[x]) for x in range(k)]
+                min_dist = min(dist)
+                min_index = dist.index(min_dist)
+                clusters[min_index].append(v)
+                sum_dist += min_dist
             center_list = calculate_center(clusters)
-            min_sum_dist = sum_dist
-        else:
-            break
-
-    return clusters
+            if min_sum_dist > sum_dist:
+                min_sum_dist = sum_dist
+            else:
+                if best_dist > min_sum_dist:
+                    best_dist = min_sum_dist
+                    best_center = center_list
+                    best_cluster = clusters
+                break
+    return best_center, best_cluster, best_dist
 
 
 # select initial points for k-means clustering
@@ -70,12 +74,3 @@ def calculate_center(clusters):     # calculate center at each cluster
         point = [sum(x) / size for x in zip(*c)]
         center_points.append(point)
     return center_points
-
-
-vectors = []
-for i in range(10):
-    vectors.append([random.randint(0, 6) for i in range(4)])
-print(vectors)
-clusters = cluster(vectors, 3, 'forgy')
-for c in clusters:
-    print(c)
