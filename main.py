@@ -2,7 +2,7 @@ from get_features import FeatureMaker
 
 
 def make_feature_file(fm):
-    feature_file = open("feature_information.txt", 'w')
+    feature_file = open("feature_information.data", 'w')
     feature_file.write("classLast,{0},{1},space\n".format(fm.term_num(), fm.class_num()))
     for test_case_info in fm.case_info_list:
         str_vector = map(str, test_case_info.get_vector())
