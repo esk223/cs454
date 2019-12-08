@@ -12,6 +12,7 @@ def cluster(file_name, k, method='random', num_iter=10):
     for l in lines:
         vector = l.split()
         vec_list.append([float(v) for v in vector])
+    vec_list = np.asarray(vec_list)
     f.close()
     upper = 1 << 31
     best_cluster = []
@@ -26,9 +27,12 @@ def cluster(file_name, k, method='random', num_iter=10):
             for v in vec_list:
                 dist = [distance.euclidean(v[:-1], center_list[x][:-1]) for x in range(k)]
                 min_dist = min(dist)
-                min_index = dist.index(min_dist)
-                clusters[min_index].append(v)
+                min_index = [index for index, value in enumerate(dist) if value == min_dist]
+                min_values = [len(clusters[ind]) for ind in min_index]
+                r_i = min_index[min_values.index(min(min_values))]
+                clusters[r_i].append(v)
                 sum_dist += min_dist
+
             if min_sum_dist > sum_dist:
                 center_list = calculate_center(clusters)
                 min_sum_dist = sum_dist
@@ -38,6 +42,12 @@ def cluster(file_name, k, method='random', num_iter=10):
                     best_center = center_list
                     best_cluster = clusters
                 break
+    """            
+    for c in best_cluster:
+        for v in c:
+            print(v[-1])
+        print("----------------------")
+    """
     return best_center, best_cluster, best_dist
 
 
@@ -71,13 +81,17 @@ def initialize(vec_list, k, method):
                 if rand_p < d:
                     init_points.append(vec_list.pop(i))
                     break
-    return init_points
+    return np.asarray(init_points)
 
 
 def calculate_center(clusters):     # calculate center at each cluster
     center_points = []
     for c in clusters:
-        size = len(c)
-        point = [sum(x) / size for x in zip(*c)]
-        center_points.append(point)
-    return center_points
+        if len(c) == 0:
+            center_points.append(clusters[0][0])
+            continue
+        point = np.mean(np.array(c), axis=0)
+        new_c = np.power(np.asarray(c) - point, 2)
+        dist_c = [sum(j[:-1]) for j in new_c]
+        center_points.append(c[np.argmin(dist_c)])
+    return np.asarray(center_points)
