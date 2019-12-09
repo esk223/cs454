@@ -2,6 +2,7 @@ import csv
 import multiprocessing
 import sys
 import warnings
+import output_change
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -105,7 +106,7 @@ def evaluate(individual, toolbox, data, k, metric, maximise, distance_vector=Non
         raise Exception("invalid metric: {}".format(metric))
 
 
-def write_ind_to_file(ind, run_num, results):
+def write_ind_to_file(ind, run_num, results,datafile):
     """
     Writes the attributes of an individual to file.
 
@@ -131,7 +132,7 @@ def write_ind_to_file(ind, run_num, results):
     fl = open("%d_ind.txt" % run_num, 'w')
     fl.writelines(line_list)
     fl.close()
-
+    output_change.change_output(str(run_num)+"_ind.txt",N_TREES,datafile+".data",run_num)
     csv_columns = results.keys()
     csv_file = "%d_results.txt" % run_num
 
@@ -279,7 +280,7 @@ def main(datafile, run_num):
 
     best = hof[0]
     res = final_evaluation(best, rd['data'], rd['labels'], rd['num_classes'], toolbox)
-    write_ind_to_file(best, run_num, res)
+    write_ind_to_file(best, run_num, res,datafile)
 
     return pop, stats, hof
 
