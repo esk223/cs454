@@ -14,7 +14,9 @@ def process_data(individual, toolbox, data):
         # convert each feature to a single element vector for vector representation
         vec = list(map(lambda x: [x], instance))
         X.append(func(*vec))
-
+    #print("X: ")
+    #print(X)
+    #print("\n\n\n\n")
     return X
 
 

@@ -83,7 +83,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, elitism, ngen, stats=None,
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
-
+		
         # Select the next generation individuals
         sorted_elite = sorted(population, key=attrgetter("fitness"), reverse=True)[:elitism]
 

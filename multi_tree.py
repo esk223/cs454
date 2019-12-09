@@ -4,8 +4,9 @@ import numpy as np
 
 from deap import gp, creator
 from deap import tools
-from main import N_TREES, MAX_HEIGHT
 
+N_TREES=100
+MAX_HEIGHT = 8
 
 def process_data(individual, toolbox, data):
     no_instances = data.shape[0]

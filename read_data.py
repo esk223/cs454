@@ -25,7 +25,6 @@ def read_data(filename):
         feat_labels.append("class")
     else:
         raise ValueError(classPos)
-
     num_classes = int(config[2])
     delim = delim_map(config[3])
 
