@@ -22,7 +22,7 @@ from read_data import read_data
 from selection import *
 
 POP_SIZE = 1024
-NGEN = 100
+NGEN = 10
 CXPB = 0.8
 MUTPB = 0.2
 ELITISM = 10
