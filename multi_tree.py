@@ -5,10 +5,15 @@ import numpy as np
 from deap import gp, creator
 from deap import tools
 
-N_TREES=100
-MAX_HEIGHT = 8
+#N_TREES=1
+#MAX_HEIGHT = 8
 
-def process_data(individual, toolbox, data):
+from main_gp_tree import MAX_HEIGHT
+
+def process_data(individual, toolbox, data,a):
+    global MAX_HEIGHT
+    MAX_HEIGHT=a
+    #print("process data MAX_HEIGHT",MAX_HEIGHT)
     no_instances = data.shape[0]
     no_trees = len(individual)
     feature_major = data.T
@@ -41,7 +46,7 @@ def init_primitives(pset):
     pset.addEphemeralConstant("rand", ephemeral=lambda: random.uniform(-1, 1))
 
 
-def init_toolbox(toolbox, pset):
+def init_toolbox(toolbox, pset, N_TREES):
     creator.create("Individual", list, fitness=creator.FitnessMax, pset=pset)
 
     toolbox.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=6)
@@ -65,6 +70,8 @@ def maxheight(v):
 
 # stolen from gp.py....because you can't pickle decorated functions.
 def wrap(func, *args, **kwargs):
+    global MAX_HEIGHT
+    #print("wrap MAX_HEIGHT",MAX_HEIGHT)
     keep_inds = [copy.deepcopy(ind) for ind in args]
     new_inds = list(func(*args, **kwargs))
     for i, ind in enumerate(new_inds):

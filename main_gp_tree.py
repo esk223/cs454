@@ -23,17 +23,44 @@ from read_data import read_data
 from selection import *
 
 POP_SIZE = 1024
-NGEN = 3
+NGEN = 1
 CXPB = 0.8
 MUTPB = 0.2
 ELITISM = 10
 MAX_HEIGHT = 8
 SEED= 100
-REP = vt  # individual representation {mt (multi-tree) or vt (vector-tree)}
-N_TREES = 100
+REP = mt  # individual representation {mt (multi-tree) or vt (vector-tree)}
+N_TREES = 1
 DATA_DIR = '.'  # "/home/schofifinn/PycharmProjects/SSResearch/data"
 METRIC = 'intra'
 MAXIMISE = METRIC != 'intra'
+#######################################################################3
+#make feature for result 
+
+from get_features import FeatureMaker
+import random
+import copy
+import numpy as np
+from scipy.spatial import distance
+from clustering import cluster
+
+
+
+def make_feature_file(fm, input_data_name):
+    feature_file = open(input_data_name+".data", 'w')
+    feature_file.write("classLast,{0},{1},space\n".format(fm.term_num(), fm.class_num()))
+    for test_case_info in fm.case_info_list:
+        str_vector = map(str, test_case_info.get_vector())
+        feature_file.write("{0} {1}\n".format(" ".join(str_vector), test_case_info.get_classification()))
+    feature_file.close()
+
+
+
+##################################################################
+
+
+
+
 
 
 def connectedness(cluster):
@@ -54,9 +81,10 @@ def evaluate(individual, toolbox, data, k, metric, maximise, distance_vector=Non
     :param labels_true: the ground truth cluster labels, required for ari metric
     :return: the fitness of the individual
     """
-    X = REP.process_data(individual, toolbox, data)
+    X = REP.process_data(individual, toolbox, data, MAX_HEIGHT)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
+        #print("Kmenas SEED",SEED)
         kmeans = KMeans(n_clusters=k, random_state=SEED).fit(X)
     labels = kmeans.labels_
     #print(labels)
@@ -137,7 +165,7 @@ def init_toolbox(toolbox, pset):
     :param toolbox: the toolbox to initialise
     :param pset: primitive set for evolution
     """
-    REP.init_toolbox(toolbox, pset)
+    REP.init_toolbox(toolbox, pset, N_TREES)
     toolbox.register("select", selElitistAndTournament, tournsize=7, elitism=ELITISM)
 
 def init_stats():
@@ -178,6 +206,8 @@ def init_data(rundata):
     rd = rundata
 
 def maingptree(datafile, run_num):
+    print("maing tree NGEN",NGEN)
+    print("maing tree SEED",SEED)
     random.seed(SEED)
     all_data = read_data("%s/%s.data" % (DATA_DIR, datafile))
     rd['data'] = all_data["data"]
@@ -222,5 +252,52 @@ def maingptree(datafile, run_num):
 """
 [seed] [data file]
 """
+
+
 if __name__ == "__main__":
-    maingptree(sys.argv[2], SEED)
+    
+    print("input your new data name for feature generation from pintos")
+    #input_data_name ="feature_information"
+    input_data_name= input()
+
+    feature_maker = FeatureMaker()
+    make_feature_file(feature_maker,input_data_name)
+
+    print("")
+    print("we get feature from pintos")
+    print("")
+
+    print("input how many generation you will do, NGEN")
+    NGEN= input()
+    NGEN= int(NGEN)
+    print("main NGEN", NGEN)
+    
+    print("input how many Trees you will do, N_TREES")
+    N_TREES= input()
+    N_TREES=int(N_TREES)
+    print("main N_TREES", N_TREES)
+
+    print("input how many SEEDS you will do, SEED")
+    SEED= input()
+    SEED= int(SEED)
+    print("main SEED", SEED)
+    
+
+
+
+
+    maingptree(input_data_name, SEED)
+
+    print("==================  clustering ========================")
+
+    print("input how many K klustering you will do, K")
+    k= input()
+    k= int(k)
+    print("main K", k)
+    
+
+    cluster("result_"+str(SEED)+".txt", k, method='random', num_iter=10)
+
+
+
+

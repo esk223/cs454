@@ -5,8 +5,8 @@ import random
 
 from deap import tools
 
-
-def process_data(individual, toolbox, data):
+def process_data(individual, toolbox, data,a):
+    MAX_HEIGHT=a
     func = toolbox.compile(individual)
     X = []
 
@@ -34,7 +34,7 @@ def init_primitives(pset):
     pset.addEphemeralConstant("rand", ephemeral=lambda: [random.uniform(-1, 1)])
 
 
-def init_toolbox(toolbox, pset):
+def init_toolbox(toolbox, pset, N_TREES):
 
     creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax, pset=pset)
 

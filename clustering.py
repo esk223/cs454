@@ -42,12 +42,12 @@ def cluster(file_name, k, method='random', num_iter=10):
                     best_center = center_list
                     best_cluster = clusters
                 break
-    """            
+    #"""            
     for c in best_cluster:
         for v in c:
             print(v[-1])
         print("----------------------")
-    """
+    #"""
     return best_center, best_cluster, best_dist
 
 
@@ -87,6 +87,7 @@ def initialize(vec_list, k, method):
 def calculate_center(clusters):     # calculate center at each cluster
     center_points = []
     for c in clusters:
+        #print(clusters)
         if len(c) == 0:
             center_points.append(clusters[0][0])
             continue
@@ -95,3 +96,15 @@ def calculate_center(clusters):     # calculate center at each cluster
         dist_c = [sum(j[:-1]) for j in new_c]
         center_points.append(c[np.argmin(dist_c)])
     return np.asarray(center_points)
+
+
+
+
+
+
+if __name__ == '__main__':
+    cluster("result_100.txt", 20, method='random', num_iter=10)
+
+
+
+
