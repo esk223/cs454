@@ -247,7 +247,7 @@ if __name__ == "__main__":
     NGEN = int(input("Please input the length of generations: "))
     N_TREES = int(input("Please input the number of features: "))
     SEED = int(input("Please input seed number: "))
-    maingptree("test_cases", SEED)
+    maingptree("features", SEED)
     print("GP process done")
 
     k = int(input("Please input the number of clusters, k: "))
