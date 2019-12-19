@@ -22,13 +22,6 @@ from ParallelToolbox import ParallelToolbox
 from read_data import read_data
 from selection import *
 
-from get_features import FeatureMaker
-import random
-import copy
-from scipy.spatial import distance
-from clustering import cluster
-
-
 POP_SIZE = 1024
 NGEN = 1
 CXPB = 0.8
@@ -41,6 +34,16 @@ N_TREES = 1
 DATA_DIR = '.'  # "/home/schofifinn/PycharmProjects/SSResearch/data"
 METRIC = 'intra'
 MAXIMISE = METRIC != 'intra'
+#######################################################################3
+#make feature for result 
+
+from get_features import FeatureMaker
+import random
+import copy
+import numpy as np
+from scipy.spatial import distance
+from clustering import cluster
+
 
 
 def make_feature_file(fm, input_data_name):
@@ -50,6 +53,14 @@ def make_feature_file(fm, input_data_name):
         str_vector = map(str, test_case_info.get_vector())
         feature_file.write("{0} {1}\n".format(" ".join(str_vector), test_case_info.get_classification()))
     feature_file.close()
+
+
+
+##################################################################
+
+
+
+
 
 
 def connectedness(cluster):
@@ -238,21 +249,75 @@ def maingptree(datafile, run_num):
     write_ind_to_file(best, run_num, res,datafile,rd['data'],toolbox)
     return pop, stats, hof
 
+"""
+[seed] [data file]
+"""
+
 
 if __name__ == "__main__":
+    
+    print("input your new data name for feature generation from pintos")
+    #input_data_name ="feature_information"
+    input_data_name= input()
+
     feature_maker = FeatureMaker()
-    make_feature_file(feature_maker, "features")
-    print("Getting feature information done")
+    make_feature_file(feature_maker,input_data_name)
 
-    NGEN = int(input("Please input the length of generations: "))
-    N_TREES = int(input("Please input the number of features: "))
-    SEED = int(input("Please input seed number: "))
-    maingptree("features", SEED)
-    print("GP process done")
+    print("")
+    print("=========we get feature from pintos=========")
+    print("")
+    print("what type of representation do you want? vt(vetor tree) amd mt(multi tree)")
+    
+    vector_name= str(input())
+    if vector_name=="vt":
+        REP = vt
+    elif vector_name=="mt":
+        REP = mt
+    
+    while (vector_name!="vt" and vector_name!="mt"):
+        print("what type of representation do you want? vt(vetor tree) amd mt(multi tree)")
+        vector_name= str(input())
+        if vector_name=="vt":
+            REP = vt
+        elif vector_name=="mt":
+            REP = mt
+    
+        
+    
 
-    k = int(input("Please input the number of clusters, k: "))
+    print("input how many generation you will do, NGEN")
+    NGEN= input()
+    NGEN= int(NGEN)
+    print("main NGEN", NGEN)
+    
+    print("input how many Trees you will do, N_TREES")
+    N_TREES= input()
+    N_TREES=int(N_TREES)
+    print("main N_TREES", N_TREES)
+
+    print("input how many SEEDS you will do, SEED")
+    SEED= input()
+    SEED= int(SEED)
+    print("main SEED", SEED)
+    
+
+
+
+
+    maingptree(input_data_name, SEED)
+
+    print("==================  clustering ========================")
+
+    print("input how many K klustering you will do, K")
+    k= input()
+    k= int(k)
+    print("main K", k)
+    
+
     cluster("result_"+str(SEED)+".txt", k, method='random', num_iter=10)
 
 
+1. 방법 효율차 vt vs mt (vt는 feature에서 비슷한 feature가 많을때 효율성이 떨어진다)
+2. 목표 feature수에 대한 효율차 100개, 10개 (mt를 포함한 feature reduction 함수들은 현재 feature 수에 비해 너무 feature를 줄이면 수렴한다)
 
 
