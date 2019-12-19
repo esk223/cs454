@@ -315,9 +315,3 @@ if __name__ == "__main__":
     
 
     cluster("result_"+str(SEED)+".txt", k, method='random', num_iter=10)
-
-
-1. 방법 효율차 vt vs mt (vt는 feature에서 비슷한 feature가 많을때 효율성이 떨어진다)
-2. 목표 feature수에 대한 효율차 100개, 10개 (mt를 포함한 feature reduction 함수들은 현재 feature 수에 비해 너무 feature를 줄이면 수렴한다)
-
-
