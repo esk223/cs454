@@ -244,6 +244,15 @@ if __name__ == "__main__":
     make_feature_file(feature_maker, "features")
     print("Getting feature information done")
 
+    while True:
+        vector_name = input("Please input which type of representation you will use, vt(vetor tree) or mt(multi tree): ")
+        if vector_name == "vt":
+            REP = vt
+            break
+        elif vector_name == "mt":
+            REP = mt
+            break
+
     NGEN = int(input("Please input the length of generations: "))
     N_TREES = int(input("Please input the number of features: "))
     SEED = int(input("Please input seed number: "))
