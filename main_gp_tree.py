@@ -28,14 +28,13 @@ import copy
 from scipy.spatial import distance
 from clustering import cluster
 
-
 POP_SIZE = 1024
 NGEN = 1
 CXPB = 0.8
 MUTPB = 0.2
 ELITISM = 10
 MAX_HEIGHT = 8
-SEED= 100
+SEED = 100
 REP = mt  # individual representation {mt (multi-tree) or vt (vector-tree)}
 N_TREES = 1
 DATA_DIR = '.'  # "/home/schofifinn/PycharmProjects/SSResearch/data"
@@ -44,7 +43,7 @@ MAXIMISE = METRIC != 'intra'
 
 
 def make_feature_file(fm, input_data_name):
-    feature_file = open(input_data_name+".data", 'w')
+    feature_file = open(input_data_name + ".data", 'w')
     feature_file.write("classLast,{0},{1},space\n".format(fm.term_num(), fm.class_num()))
     for test_case_info in fm.case_info_list:
         str_vector = map(str, test_case_info.get_vector())
@@ -54,7 +53,7 @@ def make_feature_file(fm, input_data_name):
 
 def connectedness(cluster):
     print(cluster)
- 
+
 
 def evaluate(individual, toolbox, data, k, metric, maximise, distance_vector=None, labels_true=None):
     """
@@ -73,13 +72,13 @@ def evaluate(individual, toolbox, data, k, metric, maximise, distance_vector=Non
     X = REP.process_data(individual, toolbox, data, MAX_HEIGHT)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        #print("Kmenas SEED",SEED)
+        # print("Kmenas SEED",SEED)
         kmeans = KMeans(n_clusters=k, random_state=SEED).fit(X)
     labels = kmeans.labels_
-    #print(labels)
-    #print("\n")
-    #print("\n")	
-    #print("\n")
+    # print(labels)
+    # print("\n")
+    # print("\n")
+    # print("\n")
     # individuals that find single cluster are unfit
     nlabels = len(set(labels))
     if nlabels == 1:
@@ -119,7 +118,8 @@ def evaluate(individual, toolbox, data, k, metric, maximise, distance_vector=Non
     else:
         raise Exception("invalid metric: {}".format(metric))
 
-def write_ind_to_file(ind, run_num, results,datafile,data,toolbox):
+
+def write_ind_to_file(ind, run_num, results, datafile, data, toolbox):
     """
     Writes the attributes of an individual to file.
 
@@ -143,10 +143,11 @@ def write_ind_to_file(ind, run_num, results,datafile,data,toolbox):
             fl.write(str(i))
             fl.write("\n")
     fl.close()
-    the_rep=0
+    the_rep = 0
     if REP is vt:
-        the_rep=1
-    output_change.change_output(str(run_num)+"_ind.txt",N_TREES,datafile+".data",run_num,the_rep)
+        the_rep = 1
+    output_change.change_output(str(run_num) + "_ind.txt", N_TREES, datafile + ".data", run_num, the_rep)
+
 
 def init_toolbox(toolbox, pset):
     """
@@ -156,6 +157,7 @@ def init_toolbox(toolbox, pset):
     """
     REP.init_toolbox(toolbox, pset, N_TREES)
     toolbox.register("select", selElitistAndTournament, tournsize=7, elitism=ELITISM)
+
 
 def init_stats():
     """
@@ -169,6 +171,7 @@ def init_stats():
     stats.register("min", np.min)
     stats.register("max", np.max)
     return stats
+
 
 def final_evaluation(best, data, labels, num_classes, toolbox, print_output=True):
     """
@@ -184,19 +187,24 @@ def final_evaluation(best, data, labels, num_classes, toolbox, print_output=True
     """
     return
 
+
 rd = {}
 
+
 def eval_wrapper(*args, **kwargs):
-    return evaluate(*args, **kwargs, toolbox=rd['toolbox'], data=rd['data'], k=rd['num_classes'],metric=rd['metric'], maximise=rd['maximise'], distance_vector=rd['distance_vector'])
+    return evaluate(*args, **kwargs, toolbox=rd['toolbox'], data=rd['data'], k=rd['num_classes'], metric=rd['metric'],
+                    maximise=rd['maximise'], distance_vector=rd['distance_vector'])
+
 
 # copies data over from parent process
 def init_data(rundata):
     global rd
     rd = rundata
 
+
 def maingptree(datafile, run_num):
-    print("maing tree NGEN",NGEN)
-    print("maing tree SEED",SEED)
+    print("maing tree NGEN", NGEN)
+    print("maing tree SEED", SEED)
     random.seed(SEED)
     all_data = read_data("%s/%s.data" % (DATA_DIR, datafile))
     rd['data'] = all_data["data"]
@@ -232,10 +240,10 @@ def maingptree(datafile, run_num):
     else:
         best = []
         for i in range(N_TREES):
-            if i<len(hof):
+            if i < len(hof):
                 best.append(hof[i])
     res = final_evaluation(best, rd['data'], rd['labels'], rd['num_classes'], toolbox)
-    write_ind_to_file(best, run_num, res,datafile,rd['data'],toolbox)
+    write_ind_to_file(best, run_num, res, datafile, rd['data'], toolbox)
     return pop, stats, hof
 
 
@@ -245,7 +253,8 @@ if __name__ == "__main__":
     print("Getting feature information done")
 
     while True:
-        vector_name = input("Please input which type of representation you will use, vt(vetor tree) or mt(multi tree): ")
+        vector_name = input(
+            "Please input which type of representation you will use, vt(vetor tree) or mt(multi tree): ")
         if vector_name == "vt":
             REP = vt
             break
@@ -260,8 +269,5 @@ if __name__ == "__main__":
     print("GP process done")
 
     k = int(input("Please input the number of clusters, k: "))
-    cluster("result_"+str(SEED)+".txt", k, method='random', num_iter=10)
-
-
-
-
+    cluster("result_" + str(SEED) + ".txt", k, method='random', num_iter=10)
+    
